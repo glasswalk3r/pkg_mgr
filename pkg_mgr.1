@@ -1,0 +1,140 @@
+.Dd $Mdocdate$
+.Dt PKG_MGR 1
+.Os
+.Sh NAME
+.Nm pkg_mgr
+.Nd screen-oriented interactive package manager
+.Sh DESCRIPTION
+The
+.Nm
+utility allows interactive browsing of the
+.Xr packages 7
+database.
+It uses the
+.Xr Curses::UI 3p
+package as its frontend and the
+.Pa databases/sqlports
+package as its backend.
+.Pp
+It allows the user to:
+.Pp
+.Bl -dash -compact -offset 3n
+.It
+browse installed and available packages by categories
+.It
+see details on a selected package
+.It
+search for a particular package by its name or associated comment
+.It
+tag packages for changes (install/remove/update)
+.It
+simulate package changes
+.It
+actually perform package changes if the user has root credentials
+.El
+.Pp
+.Nm
+proposes various screens to the user:
+.Ss Categories list
+This screen shows the list of available categories of packages,
+plus three extra categories:
+.Bl -tag -width Installed
+.It Sy All
+Shows all available packages in the database.
+This can be slow to load.
+.It Sy Installed
+Shows installed packages.
+.It Sy Orphaned
+Shows packages not required by any other packages.
+This is equivalent to the output of
+.Dq pkg_info -t .
+.El
+.Pp
+On this screen, one can use the following keys:
+.Bl -tag -width 1m
+.It Cm u
+Update all packages.
+.It Cm Enter/space/right/l
+Browse a category.
+.It Cm s
+Search for a pattern in a package name or comment.
+Will show the list of packages that match this pattern.
+.It Cm q
+Exit
+.Nm .
+.El
+.Pp
+.Xr Curses::UI 3p
+binds j/k to down/up by default like in
+.Xr vi 1 .
+.Ss Package list
+This screen shows all package names and corresponding short comments
+in the selected category.
+Currently installed packages are highlighted.
+The checked packages are the ones installed (or to be installed).
+.Pp
+On this screen, one can use the following keys:
+.Bl -tag -width 1m
+.It Cm space/l
+Change the status of a package.
+If installed, unchecking a package will tag it for removal,
+and rechecking it will tag it for update.
+If not installed, checking a package will tag it for installation.
+.It Cm s
+Simulate package changes.
+.It Cm a
+Apply package changes.
+Only possible if run with root credentials;
+will fallback to simulation otherwise.
+.It Cm Enter/right
+View selected package details.
+.It Cm left
+Go back to categories list.
+.It Cm /
+Quickly find a package name in the list.
+.It Cm q
+Exit
+.Nm .
+.El
+.Ss Package details
+This screen shows details on the selected package, such as its description,
+its dependencies, the maintainer of the package, its source website, and
+if it is installed, the packages which require it.
+.Sh ENVIRONMENT
+.Bl -tag -width PKG_PATH
+.It Ev DEBUG
+If set, dump informational messages to
+.Pa ./out.log .
+.It Ev PKG_PATH
+The package repositories to be used.
+Defaults to
+.Pa /usr/ports/packages .
+The syntax is explained in
+.Xr pkg_add 1 .
+.El
+.Sh SEE ALSO
+.Xr pkg_add 1 ,
+.Xr pkg_delete 1 ,
+.Xr pkg_info 1 ,
+.Xr packages 7
+.Pp
+Development happens in the
+.Lk http://rhaalovely.net/git/pkg_mgr
+.Xr git 1
+repository.
+.Sh HISTORY
+A first version of
+.Nm
+was released on April 15, 2008.
+At that time it was a simple wrapper around
+.Pa databases/sqlports
+and
+.Xr pkg_add 1 .
+.Pp
+Version 0.2 released on December 26, 2010 implements a clean integration
+with the
+.Ox
+package tools described in
+.Xr OpenBSD::Intro 3p .
+.Sh AUTHORS
+.An Landry Breuil Aq landry@openbsd.org
